@@ -52,7 +52,8 @@ def cached(ttl: int = 3600):
             if result is not None:
                 return result
             result = fn(*args, **kwargs)
-            _cache.set(key, result, ttl=ttl)
+            if result:  # no cachear resultados vacíos ({}, [], "")
+                _cache.set(key, result, ttl=ttl)
             return result
         return wrapper
     return decorator

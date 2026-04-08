@@ -34,7 +34,7 @@ class _FinvizTableParser(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         attrs_dict = dict(attrs)
-        if tag == "table" and attrs_dict.get("class") == "snapshot-table2":
+        if tag == "table" and "snapshot-table2" in attrs_dict.get("class", ""):
             self._in_table = True
         if self._in_table and tag == "td":
             self._current = ""

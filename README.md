@@ -30,13 +30,11 @@ Start with **financial analysis** — the core plugin that provides shared model
 
 | Plugin | Type | How it helps | Connectors |
 |--------|------|-------------|------------|
-| **[financial analysis](./financial-analysis)** | Core (install first) | Build comps, DCF models, LBO models, and 3-statement financials. QC presentations and create reusable PPT templates. Provides the shared foundation and all data connectors. | Daloopa, Morningstar, S&P Global, FactSet, Moody's, MT Newswires, Aiera, LSEG, PitchBook, Chronograph, Egnyte |
-| **[investment banking](./investment-banking)** | Add-on | Draft CIMs, teasers, and process letters. Build buyer lists, run merger models, create strip profiles, and track live deals through milestones. | — |
+| **[financial analysis](./financial-analysis)** | Core (install first) | Build comps, DCF models, LBO models, and 3-statement financials. QC presentations and create reusable PPT templates. | — |
 | **[equity research](./equity-research)** | Add-on | Write earnings updates and initiating coverage reports. Maintain investment theses, track catalysts, draft morning notes, and screen for new ideas. | — |
 | **[private equity](./private-equity)** | Add-on | Source and screen deals, run due diligence checklists, analyze unit economics and returns, draft IC memos, and monitor portfolio company KPIs. | — |
-| **[wealth management](./wealth-management)** | Add-on | Prep for client meetings, build financial plans, rebalance portfolios, generate client reports, and identify tax-loss harvesting opportunities. | — |
 
-**41 skills, 38 commands, 11 MCP integrations**
+**25 skills, 15 MCP integrations** (connectors: edgar, yahoo, finviz, stockanalysis + 11 premium)
 
 Install these directly from Cowork, browse the full collection here on GitHub, or build your own.
 
@@ -65,10 +63,8 @@ claude plugin marketplace add anthropics/financial-services-plugins
 claude plugin install financial-analysis@financial-services-plugins
 
 # Then add function-specific plugins as needed
-claude plugin install investment-banking@financial-services-plugins
 claude plugin install equity-research@financial-services-plugins
 claude plugin install private-equity@financial-services-plugins
-claude plugin install wealth-management@financial-services-plugins
 ```
 
 Once installed, plugins activate automatically. Skills fire when relevant, and slash commands are available in your session:
@@ -103,7 +99,7 @@ Every component is file-based — markdown and JSON, no code, no infrastructure,
 
 ## MCP Integrations
 
-All connectors are centralized in the **financial analysis** core plugin and shared across all add-on plugins.
+All connectors are centralized in the root `.mcp.json` and shared across all plugins.
 
 | Provider | URL |
 |----------|-----|

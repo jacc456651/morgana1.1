@@ -11,7 +11,7 @@ DCF, comps, LBO, modelo 3 estados, competitive landscape y auditoría de modelos
 | `/modelo [TICKER]` | Modelo integrado 3 estados con proyecciones y scenarios |
 | `/audit-modelo` | Auditar modelo Excel: fórmulas, hardcodes, circular refs, BS balance |
 | `/lbo [TICKER]` | Modelo LBO: sources & uses + deuda + retornos IRR/MOIC |
-| `/duediligence [TICKER]` | Competitive analysis: moat + posicionamiento + 2×2 matrix |
+| `/competitive-analysis [TICKER]` | Competitive analysis: moat + posicionamiento + 2×2 matrix |
 
 ## Skills activos (6)
 `dcf-model` · `comps-analysis` · `lbo-model` · `3-statement-model` · `competitive-analysis` · `audit-xls`

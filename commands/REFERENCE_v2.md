@@ -508,8 +508,11 @@ Constructor de sistema de trading backtesteable. Señales verificables, gestión
 ### /cartera [edad] [horizonte] [tolerancia] [objetivo]
 Arquitecto de cartera anti-frágil. Sin acciones individuales. Solo categorías de activos, porcentajes y coberturas.
 
+### /competitive-analysis [TICKER]
+Landscape competitivo cuantitativo: moat assessment (5 tipos), positioning 2×2, benchmarking de márgenes y ROIC vs peers, ventaja diferencial sostenible. Plugin: `financial-analysis`, skill: `competitive-analysis`.
+
 ### /duediligence [TICKER]
-Due diligence express 10 puntos: sostenibilidad modelo, balance, FCF real vs contable, dilución, concentración clientes, riesgo regulatorio, insider ownership, cuota mercado, ciclo sectorial, ESG red flags.
+Due diligence express 10 puntos: sostenibilidad modelo, balance, FCF real vs contable, dilución, concentración clientes, riesgo regulatorio, insider ownership, cuota mercado, ciclo sectorial, ESG red flags. Plugin: `private-equity`, skill: `screen-deal`.
 
 ### /noticia [texto] [activo]
 Decodificador: impacto inmediato, cambio en fundamental, activos correlacionados, oportunidad contraria, indicadores a vigilar.

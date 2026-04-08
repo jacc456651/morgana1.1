@@ -1,1 +1,15 @@
-{"hooks": {}}
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python private-equity/hooks/save_pe_output.py"
+          }
+        ]
+      }
+    ]
+  }
+}

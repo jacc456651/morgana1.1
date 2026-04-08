@@ -1,1 +1,15 @@
-{"hooks": {}}
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python financial-analysis/hooks/save_model_output.py"
+          }
+        ]
+      }
+    ]
+  }
+}

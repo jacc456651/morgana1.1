@@ -11,7 +11,7 @@ Inspirado en: Philip Fisher (growth cualitativo), Peter Lynch (multi-baggers), C
 2. Yahoo Finance: precios, ratios, holders (connectors/yahoo.py)
 3. Finviz: screener, métricas técnicas (connectors/finviz.py)
 4. StockAnalysis: financials detallados (connectors/stockanalysis_client.py)
-5. MCPs premium cuando disponibles (ver .mcp.json)
+5. MCPs premium cuando disponibles (todos en root .mcp.json — disponibles para todos los plugins)
 Siempre citar: fuente + fecha del filing + URL cuando disponible.
 
 ## 5 PILARES GROWTH
@@ -79,7 +79,10 @@ Etapas: Early Growth (revenue <$500M, CAGR >30%) · Scaling (revenue $500M-$5B, 
 
 ## OUTPUT
 Formato: Markdown
-Ruta: output/reportes/[TICKER]/[FECHA]_[tipo].md
+Rutas por tipo de análisis:
+- Equity research: `output/reportes/[TICKER]/[FECHA]_[tipo].md`
+- Modelos financieros (DCF, LBO, comps, 3-statement): `output/models/[tipo]/[FECHA]_[TICKER].md`
+- Private equity (IC memos, DD, returns): `output/pe/[tipo]/[FECHA]_[nombre].md`
 Incluir siempre:
 1. Resumen ejecutivo (3-5 líneas)
 2. Clasificación (etapa + score + pesos)
@@ -106,8 +109,8 @@ Cuando se invoca un comando, usa el Skill tool con el skill correspondiente ANTE
 | `/chequea` | `earnings-analysis` | equity-research | Análisis post-earnings beat/miss + guía + estimados actualizados |
 | `/chequea` | `catalyst-calendar` | equity-research | Catalizadores próximos con impacto y patrón histórico |
 | `/sector` | `sector-overview` | equity-research | TAM + value chain + top competidores + valoración sectorial |
-| `/duediligence` | `competitive-analysis` | financial-analysis | Landscape competitivo + moat assessment + 2×2 positioning |
-| `/duediligence` | `deal-screening` | private-equity | Screening bull/bear/preguntas clave — adaptado a public equities |
+| `/competitive-analysis` | `competitive-analysis` | financial-analysis | Landscape competitivo + moat assessment + 2×2 positioning |
+| `/duediligence` | `screen-deal` | private-equity | Screening bull/bear/preguntas clave — adaptado a public equities |
 | `/premercado` | `morning-note` | equity-research | Nota apertura 1 pág: overnight + earnings + trade ideas opinadas |
 | `/portafolio` | `portfolio-monitoring` | private-equity | Performance tracking + alertas + acción requerida |
 | `/asignacion` | `ic-memo` | private-equity | Memo estructurado: tesis + retornos + riesgos + recomendación |
@@ -115,14 +118,14 @@ Cuando se invoca un comando, usa el Skill tool con el skill correspondiente ANTE
 | `/earnings-preview` | `earnings-preview` | equity-research | Pre-earnings: Bull/Base/Bear + métricas clave + implied move |
 | `/modelo` | `3-statement-model` | financial-analysis | Modelo integrado 3 estados con checkpoints + scenario analysis |
 | `/audit-modelo` | `audit-xls` | financial-analysis | Audita modelo Excel: fórmulas, hardcodes, circular refs, BS balance |
-| `/lbo` | `lbo-model` | financial-analysis | Modelo LBO: sources & uses + deuda + retornos IRR/MOIC |
+| `/lb o` | `lbo-model` | financial-analysis | Modelo LBO: sources & uses + deuda + retornos IRR/MOIC |
 
 ## COMANDOS CORE
 /sabueso [capital] [horizonte] · /analiza [TICKER] · /consejo [TICKER] · /compounder [TICKER] · /asignacion [TICKERS] · /chequea [TICKER]
 
 ## COMANDOS EXTENDIDOS
 /earnings [TICKER] · /earnings-preview [TICKER] · /modelo [TICKER] · /audit-modelo · /lbo [TICKER]
-/duediligence [TICKER] · /sector [SECTOR] · /kill [TICKER] · /watchlist · /portafolio
+/competitive-analysis [TICKER] · /duediligence [TICKER] · /sector [SECTOR] · /kill [TICKER] · /watchlist · /portafolio
 /actualiza-todo · /sentimiento [TICKER] · /stress · /premercado · /macro
 Catálogo completo: ver commands/REFERENCE_v2.md
 

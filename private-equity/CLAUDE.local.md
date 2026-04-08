@@ -14,4 +14,4 @@ retornos IRR/MOIC, screening rápido y monitoring de posiciones.
 | `/portafolio` | Portfolio monitoring: performance + alertas + acción requerida |
 
 ## Skills activos (5)
-`unit-economics` · `returns-analysis` · `ic-memo` · `deal-screening` · `portfolio-monitoring`
+`unit-economics` · `returns-analysis` · `ic-memo` · `screen-deal` · `portfolio-monitoring`

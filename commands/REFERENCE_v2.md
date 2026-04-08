@@ -8,25 +8,25 @@
 
 ### Conectores disponibles
 
-| Fuente | Tipo | Conector | Datos |
-|--------|------|----------|-------|
-| EDGAR SEC | Fundamental | connectors/edgar.py | 10-K, 10-Q, 8-K, 13F (institutional holdings), insider Form 4 |
-| Yahoo Finance | Fundamental + Precio | connectors/yahoo.py | Precios, ratios, holders, OHLCV histórico, short interest básico |
-| Finviz | Screening + Técnico | connectors/finviz.py | Screener, métricas, mapas de calor, short interest, insider |
-| StockAnalysis | Fundamental detallado | connectors/stockanalysis_client.py | Financials, estimates, insider, ratios |
-| Alpha Vantage | Técnico + Fundamental | connectors/alphavantage.py | 50+ indicadores (RSI, MACD, MAs, Bollinger, OBV, ADX), intraday OHLCV |
-| Twelve Data | Técnico avanzado | connectors/twelvedata.py | Indicadores en múltiples timeframes, estructura de precios |
-| MCPs premium | Mixto | ver `.mcp.json` | Cuando disponibles (opciones, alt data) |
+| Fuente | Tipo | Conector | Datos | Estado |
+|--------|------|----------|-------|--------|
+| EDGAR SEC | Fundamental | connectors/edgar.py | 10-K, 10-Q, 8-K, 13F (institutional holdings), insider Form 4 | ✅ Activo |
+| Yahoo Finance | Fundamental + Precio | connectors/yahoo.py | Precios, ratios, holders, OHLCV histórico, short interest básico | ✅ Activo |
+| Finviz | Screening + Técnico | connectors/finviz.py | Screener, métricas, mapas de calor, short interest, insider | ⚠️ Activo (scraping inestable) |
+| StockAnalysis | Fundamental detallado | connectors/stockanalysis_client.py | Financials, estimates, insider, ratios | ✅ Activo |
+| Alpha Vantage | Técnico + Fundamental | — | 50+ indicadores (RSI, MACD, MAs, Bollinger, OBV, ADX), intraday OHLCV | ❌ No implementado (requiere API key) |
+| Twelve Data | Técnico avanzado | — | Indicadores en múltiples timeframes, estructura de precios | ❌ No implementado (requiere API key) |
+| MCPs premium | Mixto | ver `.mcp.json` | Cuando disponibles (opciones, alt data) | ⚠️ Según disponibilidad |
 
 ### Cobertura datos → fuente
 
 | Dato | Fuente principal | Fallback | Estado |
 |------|-----------------|----------|--------|
-| Precios OHLCV | Yahoo Finance | Alpha Vantage | ✅ Completo |
+| Precios OHLCV | Yahoo Finance | — | ✅ Completo |
 | Filings (10-K/Q, 8-K) | EDGAR | — | ✅ Completo |
-| Screening fundamental | Finviz | StockAnalysis | ✅ Completo |
-| Indicadores técnicos | Alpha Vantage | Twelve Data | ✅ Completo |
-| Estructura de mercado (ChoCh, BOS) | `analysis/market_structure.py` (interno) | — | ✅ Completo |
+| Screening fundamental | Finviz | StockAnalysis | ⚠️ Finviz inestable; StockAnalysis como fallback |
+| Indicadores técnicos | Yahoo Finance (OHLCV) | — | ⚠️ Parcial — Alpha Vantage/Twelve Data no implementados |
+| Estructura de mercado (ChoCh, BOS) | — | — | ❌ No implementado (`analysis/market_structure.py` no existe) |
 | Insider buying/selling | EDGAR Form 4 | Finviz, Yahoo | ✅ Completo |
 | Institutional flow (13F) | EDGAR | — | ✅ Completo |
 | Short interest + Days to Cover | Finviz, Yahoo | — | ⚠️ Best-effort (delay quincenal de exchanges) |
@@ -45,9 +45,12 @@
 
 ### Módulo `analysis/market_structure.py`
 
-Interfaz pública del módulo (usado por `/morgan`, `/tecnico`, `/scanner`):
+> ❌ **No implementado.** El módulo `analysis/market_structure.py` no existe en el repo. Los comandos `/morgan`, `/tecnico` y `/scanner` que dependan de ChoCh, BOS u order blocks deben declarar `[Dato no disponible: análisis de estructura de mercado no implementado]` y omitir esa sección del output.
+>
+> Especificación de referencia (para futura implementación si se requiere):
 
 ```python
+# SPEC — no implementado aún
 def detect_choch(ohlcv_df, lookback=20) -> dict
     # Input: DataFrame con columnas [open, high, low, close, volume], índice temporal
     # Output: {"choch_detected": bool, "type": "bullish"|"bearish"|None,

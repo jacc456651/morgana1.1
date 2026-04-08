@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "edgar": {
+      "command": "py",
+      "args": ["-3", "connectors/edgar_server.py"],
+      "description": "SEC EDGAR - datos oficiales 10-K, 10-Q, 8-K"
+    },
+    "yahoo": {
+      "command": "py",
+      "args": ["-3", "connectors/yahoo_server.py"],
+      "description": "Yahoo Finance via yfinance - precios, ratios, historico, opciones"
+    },
+    "finviz": {
+      "command": "py",
+      "args": ["-3", "connectors/finviz_server.py"],
+      "description": "Finviz - screener sectorial y comparaciones"
+    },
+    "stockanalysis": {
+      "command": "py",
+      "args": ["-3", "connectors/stockanalysis_server.py"],
+      "description": "StockAnalysis.com - income statement, balance sheet, cash flow, ratios"
+    }
+  }
+}

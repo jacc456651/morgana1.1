@@ -1,43 +1,28 @@
 {
-  "name": "financial-services-plugins",
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "morgana-fsi",
+  "description": "MORGANA — Sistema de Inversión Growth Institucional. Plugins para análisis buy-side de US equities: equity research, financial modeling y private equity.",
   "owner": {
-    "name": "Anthropic"
+    "name": "MORGANA"
   },
   "plugins": [
     {
-      "name": "financial-analysis",
-      "source": "./financial-analysis",
-      "description": "Core financial modeling and analysis tools: DCF, comps, LBO, 3-statement models, competitive analysis, and deck QC"
-    },
-    {
-      "name": "investment-banking",
-      "source": "./investment-banking",
-      "description": "Investment banking productivity tools - client and market insights, deck creation, financial analysis, and transaction management"
-    },
-    {
       "name": "equity-research",
+      "description": "Equity research institucional: earnings analysis, initiating coverage, thesis tracking, sector overview, idea generation y catalyst calendar.",
       "source": "./equity-research",
-      "description": "Equity research tools: earnings analysis, initiating coverage reports, and research workflows"
+      "category": "finance"
+    },
+    {
+      "name": "financial-analysis",
+      "description": "Modelos financieros cuantitativos: DCF, comps, LBO, 3-statement model, competitive analysis y audit de Excel.",
+      "source": "./financial-analysis",
+      "category": "finance"
     },
     {
       "name": "private-equity",
+      "description": "Análisis PE adaptado a buy-side: unit economics, returns analysis (IRR/MOIC), IC memo, deal screening y portfolio monitoring.",
       "source": "./private-equity",
-      "description": "Private equity deal sourcing and workflow tools: company discovery, CRM integration, and founder outreach"
-    },
-    {
-      "name": "wealth-management",
-      "source": "./wealth-management",
-      "description": "Wealth management and financial advisory tools: client reviews, financial planning, portfolio analysis, and client reporting"
-    },
-    {
-      "name": "lseg",
-      "source": "./partner-built/lseg",
-      "description": "Price bonds, analyze yield curves, evaluate FX carry trades, value options, and build macro dashboards using LSEG financial data and analytics."
-    },
-    {
-      "name": "sp-global",
-      "source": "./partner-built/spglobal",
-      "description": "S&P Global - Financial data and analytics skills including company tearsheets, earnings previews, and transaction summaries"
+      "category": "finance"
     }
   ]
 }

@@ -1,1 +1,15 @@
-[]
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python equity-research/hooks/save_earnings.py"
+          }
+        ]
+      }
+    ]
+  }
+}

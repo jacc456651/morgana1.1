@@ -1,0 +1,52 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:data.sec.gov)",
+      "WebFetch(domain:efts.sec.gov)",
+      "WebFetch(domain:finance.yahoo.com)",
+      "WebFetch(domain:finviz.com)",
+      "WebFetch(domain:stockanalysis.com)",
+      "Bash(pip show:*)",
+      "Bash(py --version)",
+      "Bash(pip3 install:*)",
+      "Bash(pip install:*)",
+      "Bash(py:*)",
+      "Bash(python connectors/stockanalysis_client.py)",
+      "Bash(python -m pip install requests beautifulsoup4 -q)",
+      "Bash(curl -s \"https://www.sec.gov/cgi-bin/browse-edgar?company=&CIK=NAGE&type=10-K&dateb=&owner=include&count=10&search_text=&action=getcompany\")",
+      "Bash(curl:*)",
+      "WebFetch(domain:www.sec.gov)",
+      "WebSearch",
+      "WebFetch(domain:s205.q4cdn.com)",
+      "WebFetch(domain:investors.chromadex.com)",
+      "Read(//usr/**)",
+      "Bash(ls /c/Python*/python.exe)",
+      "Bash(python3 -c \":*)",
+      "WebFetch(domain:www.wisesheets.io)",
+      "WebFetch(domain:simplywall.st)",
+      "WebFetch(domain:harmonybio.com)",
+      "WebFetch(domain:ir.harmonybio.com)",
+      "WebFetch(domain:clinicaltrials.gov)",
+      "WebFetch(domain:www.reuters.com)",
+      "WebFetch(domain:seekingalpha.com)",
+      "WebFetch(domain:www.marketbeat.com)",
+      "Bash(grep:*)",
+      "Bash(python -c \"import mcp; print\\(mcp.__version__\\)\")",
+      "Bash(python3 -c \"import mcp; print\\(mcp.__version__\\)\")",
+      "Bash(python3 -c \"import yfinance; import requests; import bs4; print\\('deps ok'\\)\")",
+      "Bash(where python:*)",
+      "Bash(where python3:*)",
+      "Bash(claude plugin:*)",
+      "mcp__yahoo__yahoo_get_price",
+      "mcp__finviz__finviz_get_snapshot",
+      "mcp__edgar__edgar_get_cik",
+      "mcp__stockanalysis__stockanalysis_get_ratios"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "edgar",
+    "yahoo",
+    "finviz",
+    "stockanalysis"
+  ]
+}

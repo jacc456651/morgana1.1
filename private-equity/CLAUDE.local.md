@@ -13,5 +13,6 @@ retornos IRR/MOIC, screening rápido y monitoring de posiciones.
 | `/duediligence [TICKER]` | Deal screening: facts rápidos + bull/bear + preguntas clave |
 | `/portafolio` | Portfolio monitoring: performance + alertas + acción requerida |
 
-## Skills activos (5)
+## Skills activos (10)
 `unit-economics` · `returns-analysis` · `ic-memo` · `screen-deal` · `portfolio-monitoring`
+`dd-prep` · `dd-checklist` · `value-creation` · `deal-sourcing` · `ai-readiness`

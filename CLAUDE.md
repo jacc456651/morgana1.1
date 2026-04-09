@@ -114,11 +114,16 @@ Cuando se invoca un comando, usa el Skill tool con el skill correspondiente ANTE
 | `/premercado` | `morning-note` | equity-research | Nota apertura 1 pág: overnight + earnings + trade ideas opinadas |
 | `/portafolio` | `portfolio-monitoring` | private-equity | Performance tracking + alertas + acción requerida |
 | `/asignacion` | `ic-memo` | private-equity | Memo estructurado: tesis + retornos + riesgos + recomendación |
+| `/dd-prep` | `dd-prep` | private-equity | Prep reunión de diligencia: preguntas clave + red flags + benchmarks |
+| `/dd-checklist` | `dd-checklist` | private-equity | Checklist due diligence completo estructurado por área |
+| `/source` | `deal-sourcing` | private-equity | Sourcing de deals: descubrir empresas + outreach a founders |
+| `/value-creation` | `value-creation` | private-equity | Plan post-adquisición: EBITDA bridge + 100-day plan + KPI dashboard |
+| `/ai-readiness` | `ai-readiness` | private-equity | Scan del portafolio para oportunidades de AI de alto impacto |
 | `/earnings` | `earnings-analysis` | equity-research | Reporte earnings completo post-resultados |
 | `/earnings-preview` | `earnings-preview` | equity-research | Pre-earnings: Bull/Base/Bear + métricas clave + implied move |
 | `/modelo` | `3-statement-model` | financial-analysis | Modelo integrado 3 estados con checkpoints + scenario analysis |
 | `/audit-modelo` | `audit-xls` | financial-analysis | Audita modelo Excel: fórmulas, hardcodes, circular refs, BS balance |
-| `/lb o` | `lbo-model` | financial-analysis | Modelo LBO: sources & uses + deuda + retornos IRR/MOIC |
+| `/lbo` | `lbo-model` | financial-analysis | Modelo LBO: sources & uses + deuda + retornos IRR/MOIC |
 
 ## COMANDOS CORE
 /sabueso [capital] [horizonte] · /analiza [TICKER] · /consejo [TICKER] · /compounder [TICKER] · /asignacion [TICKERS] · /chequea [TICKER]

@@ -13,7 +13,7 @@ import logging
 import bcrypt
 import jwt
 import secrets
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field
 from typing import List, Optional
 import uuid
 from datetime import datetime, timezone, timedelta
@@ -71,8 +71,9 @@ async def get_optional_user(request: Request):
         return None
 
 # ── Models ──
-class StatusCheck(BaseModel):
-    model_config = ConfigDict(extra="ignore")
+  class StatusCheck(BaseModel):
+      class Config:
+          extra = 'ignore'
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     client_name: str
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

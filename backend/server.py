@@ -71,9 +71,9 @@ async def get_optional_user(request: Request):
         return None
 
 # ── Models ──
-  class StatusCheck(BaseModel):
-      class Config:
-          extra = 'ignore'
+class StatusCheck(BaseModel):
+    class Config:
+        extra = 'ignore'
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     client_name: str
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

@@ -212,7 +212,7 @@ function App() {
         </section>
 
         {/* SECTION 3: TABS */}
-        <section id="pestanas" className="px-5 md:px-10 py-16 md:py-24 max-w-5xl mx-auto border-t border-white/[0.06]" data-testid="section-tabs">
+        <section id="pestanas" className="px-5 md:px-10 py-16 md:py-24 max-w-5xl mx-auto border-t border-white/[0.06]" data-testid="section-pestanas">
           <SectionHeader num="3" title="Las 4 pestanas del screener" />
           <p className="text-sm md:text-base text-[#A3A3A3] leading-relaxed mb-6">
             El screener organiza sus 70+ filtros en 4 pestanas. Entender que hay en cada una es critico.
@@ -252,7 +252,7 @@ function App() {
         </section>
 
         {/* SECTION 4: RESULTS */}
-        <section id="resultados" className="px-5 md:px-10 py-16 md:py-24 max-w-5xl mx-auto border-t border-white/[0.06]" data-testid="section-results">
+        <section id="resultados" className="px-5 md:px-10 py-16 md:py-24 max-w-5xl mx-auto border-t border-white/[0.06]" data-testid="section-resultados">
           <SectionHeader num="4" title="Como leer los resultados del screener" />
           <p className="text-sm md:text-base text-[#A3A3A3] leading-relaxed mb-6">
             Finviz muestra resultados en tabla, 20 empresas por pagina, ordenables por cualquier columna.

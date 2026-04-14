@@ -1,0 +1,58 @@
+{
+  "summary": {
+    "total_tests": 8,
+    "passed_tests": 8,
+    "success_rate": 100.0,
+    "timestamp": "2026-04-14T09:49:00.672123"
+  },
+  "test_results": [
+    {
+      "test": "API Root Endpoint",
+      "success": true,
+      "details": "Status: 200, Response: {'message': 'MORGANA Finviz Guide API'}",
+      "timestamp": "2026-04-14T09:48:59.520500"
+    },
+    {
+      "test": "GET Favorites (Initial)",
+      "success": true,
+      "details": "Status: 200, Count: 0 favorites",
+      "timestamp": "2026-04-14T09:48:59.660348"
+    },
+    {
+      "test": "GET Favorites (With Data)",
+      "success": true,
+      "details": "Status: 200, Count: 1 favorites, First: Growth Compounders",
+      "timestamp": "2026-04-14T09:48:59.926832"
+    },
+    {
+      "test": "Create Duplicate Favorite",
+      "success": true,
+      "details": "First: 200, Second: 200, Same ID: True",
+      "timestamp": "2026-04-14T09:49:00.175168"
+    },
+    {
+      "test": "DELETE Favorite",
+      "success": true,
+      "details": "Status: 200, Message: Favorite removed",
+      "timestamp": "2026-04-14T09:49:00.274054"
+    },
+    {
+      "test": "DELETE Nonexistent Favorite",
+      "success": true,
+      "details": "Status: 404 (Expected 404)",
+      "timestamp": "2026-04-14T09:49:00.375841"
+    },
+    {
+      "test": "DELETE Favorite",
+      "success": true,
+      "details": "Status: 200, Message: Favorite removed",
+      "timestamp": "2026-04-14T09:49:00.473340"
+    },
+    {
+      "test": "Status Endpoints",
+      "success": true,
+      "details": "POST Status: 200, GET Status: 200, Count: 1 status checks",
+      "timestamp": "2026-04-14T09:49:00.670600"
+    }
+  ]
+}

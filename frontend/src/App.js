@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import "@/App.css";
 import axios from "axios";
 import { cacerias } from "@/data/cacerias";
@@ -6,11 +6,13 @@ import { originalTips, advancedTips } from "@/data/tips";
 import TradingViewWidget from "@/components/TradingViewWidget";
 import CaceriaCard from "@/components/CaceriaCard";
 import ComparativeTable from "@/components/ComparativeTable";
+import AuthModal from "@/components/AuthModal";
 import {
   Menu, X, Star, ChevronRight, TrendingUp, Target, Zap, Building2,
   BarChart3, Search, Calendar, Map, AlertCircle, ArrowRight,
   Copy, Check, ExternalLink, BookOpen, Settings, Layers, LineChart,
-  Shield, Flame, Eye, Crosshair, Repeat, LayoutGrid
+  Shield, Flame, Eye, Crosshair, Repeat, LayoutGrid,
+  LogIn, LogOut, User, Download, Filter
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -41,25 +43,54 @@ function App() {
   const [favorites, setFavorites] = useState([]);
   const [copiedUrl, setCopiedUrl] = useState(null);
   const [tvSymbol, setTvSymbol] = useState("NASDAQ:AAPL");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [riskFilter, setRiskFilter] = useState("all");
+  const [authOpen, setAuthOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(() => localStorage.getItem('morgana_token'));
+
+  const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
 
   const fetchFavorites = useCallback(async () => {
     try {
-      const res = await axios.get(`${API}/favorites`);
+      const res = await axios.get(`${API}/favorites`, { headers: authHeaders });
       setFavorites(res.data);
     } catch (e) {
       console.error("Error fetching favorites:", e);
     }
-  }, []);
+  }, [token]);
+
+  // Check auth on mount
+  useEffect(() => {
+    if (token) {
+      axios.get(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => setUser(res.data))
+        .catch(() => { setToken(null); localStorage.removeItem('morgana_token'); });
+    }
+  }, [token]);
 
   useEffect(() => { fetchFavorites(); }, [fetchFavorites]);
+
+  const handleAuth = (userData, newToken) => {
+    setUser(userData);
+    setToken(newToken);
+    localStorage.setItem('morgana_token', newToken);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem('morgana_token');
+    setFavorites([]);
+  };
 
   const toggleFavorite = async (caceria) => {
     const isFav = favorites.some((f) => f.caceria_id === caceria.id);
     try {
       if (isFav) {
-        await axios.delete(`${API}/favorites/${caceria.id}`);
+        await axios.delete(`${API}/favorites/${caceria.id}`, { headers: authHeaders });
       } else {
-        await axios.post(`${API}/favorites`, { caceria_id: caceria.id, caceria_name: caceria.name });
+        await axios.post(`${API}/favorites`, { caceria_id: caceria.id, caceria_name: caceria.name }, { headers: authHeaders });
       }
       fetchFavorites();
     } catch (e) {
@@ -78,6 +109,37 @@ function App() {
     setSidebarOpen(false);
   };
 
+  const exportCSV = () => {
+    const headers = ['Caceria ID', 'Caceria', 'Fecha'];
+    const rows = favorites.map(f => [f.caceria_id, f.caceria_name, f.created_at || 'N/A']);
+    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'morgana_favoritos.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const filteredCacerias = useMemo(() => {
+    let result = cacerias;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(c =>
+        c.name.toLowerCase().includes(q) ||
+        c.subtitle.toLowerCase().includes(q) ||
+        c.description.toLowerCase().includes(q) ||
+        c.keyFilters.toLowerCase().includes(q) ||
+        c.filters.some(f => f.filter.toLowerCase().includes(q) || f.value.toLowerCase().includes(q))
+      );
+    }
+    if (riskFilter !== "all") {
+      result = result.filter(c => c.riskProfile === riskFilter);
+    }
+    return result;
+  }, [searchQuery, riskFilter]);
+
   return (
     <div className="min-h-screen bg-[#050505] text-[#FAFAFA]">
       {/* Mobile top bar */}
@@ -86,7 +148,9 @@ function App() {
           {sidebarOpen ? <X size={22} className="text-[#FAFAFA]" /> : <Menu size={22} className="text-[#FAFAFA]" />}
         </button>
         <span className="font-heading text-lg gold-text font-semibold tracking-tight">MORGANA</span>
-        <div className="w-8" />
+        <button onClick={() => user ? handleLogout() : setAuthOpen(true)} className="p-1" data-testid="mobile-auth-btn">
+          {user ? <LogOut size={18} className="text-[#C5A059]" /> : <LogIn size={18} className="text-[#A3A3A3]" />}
+        </button>
       </header>
 
       {/* Sidebar overlay */}
@@ -99,6 +163,21 @@ function App() {
         <div className="p-5 border-b border-white/[0.06]">
           <h2 className="font-heading text-xl gold-text font-semibold">MORGANA</h2>
           <p className="text-[11px] text-[#737373] mt-0.5 font-mono tracking-wider">GUIA FINVIZ SCREENER</p>
+          {user ? (
+            <div className="mt-3 flex items-center justify-between">
+              <div className="flex items-center gap-2 min-w-0">
+                <User size={13} className="text-[#C5A059] shrink-0" />
+                <span className="text-xs text-[#A3A3A3] truncate">{user.name || user.email}</span>
+              </div>
+              <button onClick={handleLogout} className="text-[#737373] hover:text-red-400 transition-colors shrink-0" data-testid="logout-btn">
+                <LogOut size={13} />
+              </button>
+            </div>
+          ) : (
+            <button onClick={() => setAuthOpen(true)} className="mt-3 flex items-center gap-1.5 text-xs text-[#C5A059] hover:text-[#D4AF37] transition-colors" data-testid="login-btn">
+              <LogIn size={12} /> Iniciar sesion
+            </button>
+          )}
         </div>
         <nav className="py-2 px-2">
           {navItems.map((item, i) =>
@@ -318,23 +397,70 @@ function App() {
 
         {/* CACERIAS C1-C8 */}
         <div className="px-5 md:px-10 py-16 md:py-24 max-w-5xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <div className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#C5A059] mb-3">Las 8 Estrategias</div>
             <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight">Las Cacerias de MORGANA</h2>
           </div>
-          <div className="space-y-6 stagger-children">
-            {cacerias.map((c) => (
-              <div key={c.id} id={c.id} className="animate-fade-in-up">
-                <CaceriaCard
-                  caceria={c}
-                  isFavorite={favorites.some((f) => f.caceria_id === c.id)}
-                  onToggleFavorite={() => toggleFavorite(c)}
-                  onCopyUrl={copyUrl}
-                  copied={copiedUrl === c.id}
-                />
-              </div>
-            ))}
+
+          {/* Search & Filter Bar */}
+          <div className="flex flex-col md:flex-row gap-3 mb-6" data-testid="search-filter-bar">
+            <div className="relative flex-1">
+              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#737373]" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar cacerias por nombre, filtro, descripcion..."
+                className="w-full pl-9 pr-4 py-2.5 bg-white/[0.04] border border-white/[0.1] text-sm text-[#FAFAFA] placeholder-[#737373] focus:border-[#C5A059]/50 focus:outline-none transition-colors font-mono"
+                data-testid="search-input"
+              />
+            </div>
+            <div className="flex gap-2">
+              <select
+                value={riskFilter}
+                onChange={(e) => setRiskFilter(e.target.value)}
+                className="px-3 py-2.5 bg-white/[0.04] border border-white/[0.1] text-sm text-[#FAFAFA] focus:border-[#C5A059]/50 focus:outline-none transition-colors font-mono appearance-none cursor-pointer"
+                data-testid="risk-filter-select"
+              >
+                <option value="all" className="bg-[#111]">Todos los perfiles</option>
+                <option value="Bajo" className="bg-[#111]">Bajo riesgo</option>
+                <option value="Moderado" className="bg-[#111]">Moderado</option>
+                <option value="Alto" className="bg-[#111]">Alto riesgo</option>
+                <option value="Muy Alto" className="bg-[#111]">Muy Alto</option>
+              </select>
+              {favorites.length > 0 && (
+                <button
+                  onClick={exportCSV}
+                  className="flex items-center gap-1.5 px-3 py-2.5 border border-[#C5A059]/30 text-[#C5A059] hover:bg-[#C5A059]/10 transition-colors text-xs font-mono shrink-0"
+                  data-testid="export-csv-btn"
+                >
+                  <Download size={13} /> CSV
+                </button>
+              )}
+            </div>
           </div>
+
+          {filteredCacerias.length === 0 ? (
+            <div className="text-center py-12 text-[#737373]" data-testid="no-results">
+              <Search size={32} className="mx-auto mb-3 opacity-50" />
+              <p className="text-sm">No se encontraron cacerias con esos filtros</p>
+              <button onClick={() => { setSearchQuery(''); setRiskFilter('all'); }} className="mt-2 text-xs text-[#C5A059] hover:underline">Limpiar filtros</button>
+            </div>
+          ) : (
+            <div className="space-y-6 stagger-children">
+              {filteredCacerias.map((c) => (
+                <div key={c.id} id={c.id} className="animate-fade-in-up">
+                  <CaceriaCard
+                    caceria={c}
+                    isFavorite={favorites.some((f) => f.caceria_id === c.id)}
+                    onToggleFavorite={() => toggleFavorite(c)}
+                    onCopyUrl={copyUrl}
+                    copied={copiedUrl === c.id}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* DIVIDER */}
@@ -446,6 +572,9 @@ function App() {
           </div>
         </footer>
       </main>
+
+      {/* Auth Modal */}
+      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} onAuth={handleAuth} apiUrl={API} />
     </div>
   );
 }

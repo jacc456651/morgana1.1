@@ -1,58 +1,106 @@
 {
   "summary": {
-    "total_tests": 8,
-    "passed_tests": 8,
+    "total_tests": 16,
+    "passed_tests": 16,
     "success_rate": 100.0,
-    "timestamp": "2026-04-14T09:49:00.672123"
+    "timestamp": "2026-04-14T10:05:09.670275"
   },
   "test_results": [
     {
       "test": "API Root Endpoint",
       "success": true,
       "details": "Status: 200, Response: {'message': 'MORGANA Finviz Guide API'}",
-      "timestamp": "2026-04-14T09:48:59.520500"
+      "timestamp": "2026-04-14T10:05:06.692839"
+    },
+    {
+      "test": "Admin Login",
+      "success": true,
+      "details": "Status: 200, User: admin@morgana.com, Role: admin",
+      "timestamp": "2026-04-14T10:05:07.018091"
+    },
+    {
+      "test": "Invalid Login",
+      "success": true,
+      "details": "Status: 401 (Expected 401)",
+      "timestamp": "2026-04-14T10:05:07.348208"
+    },
+    {
+      "test": "User Registration",
+      "success": true,
+      "details": "Status: 200, User: test1776161107@morgana.com, Name: Test User",
+      "timestamp": "2026-04-14T10:05:07.667661"
+    },
+    {
+      "test": "Duplicate Registration",
+      "success": true,
+      "details": "Status: 400 (Expected 400)",
+      "timestamp": "2026-04-14T10:05:07.767594"
+    },
+    {
+      "test": "User Login",
+      "success": true,
+      "details": "Status: 200, User: test@morgana.com, Role: user",
+      "timestamp": "2026-04-14T10:05:08.098490"
+    },
+    {
+      "test": "Auth Me Endpoint",
+      "success": true,
+      "details": "Status: 200, User: admin@morgana.com, Role: admin",
+      "timestamp": "2026-04-14T10:05:08.195001"
+    },
+    {
+      "test": "Auth Me Invalid Token",
+      "success": true,
+      "details": "Status: 401 (Expected 401)",
+      "timestamp": "2026-04-14T10:05:08.293413"
     },
     {
       "test": "GET Favorites (Initial)",
       "success": true,
       "details": "Status: 200, Count: 0 favorites",
-      "timestamp": "2026-04-14T09:48:59.660348"
+      "timestamp": "2026-04-14T10:05:08.404556"
     },
     {
       "test": "GET Favorites (With Data)",
       "success": true,
       "details": "Status: 200, Count: 1 favorites, First: Growth Compounders",
-      "timestamp": "2026-04-14T09:48:59.926832"
+      "timestamp": "2026-04-14T10:05:08.615053"
     },
     {
       "test": "Create Duplicate Favorite",
       "success": true,
       "details": "First: 200, Second: 200, Same ID: True",
-      "timestamp": "2026-04-14T09:49:00.175168"
+      "timestamp": "2026-04-14T10:05:08.822626"
+    },
+    {
+      "test": "Authenticated Favorites",
+      "success": true,
+      "details": "Create Status: 200, Get Status: 200, Count: 1 favorites, Has C3: True",
+      "timestamp": "2026-04-14T10:05:09.028385"
     },
     {
       "test": "DELETE Favorite",
       "success": true,
       "details": "Status: 200, Message: Favorite removed",
-      "timestamp": "2026-04-14T09:49:00.274054"
+      "timestamp": "2026-04-14T10:05:09.125758"
     },
     {
       "test": "DELETE Nonexistent Favorite",
       "success": true,
       "details": "Status: 404 (Expected 404)",
-      "timestamp": "2026-04-14T09:49:00.375841"
+      "timestamp": "2026-04-14T10:05:09.226789"
     },
     {
       "test": "DELETE Favorite",
       "success": true,
       "details": "Status: 200, Message: Favorite removed",
-      "timestamp": "2026-04-14T09:49:00.473340"
+      "timestamp": "2026-04-14T10:05:09.334831"
     },
     {
       "test": "Status Endpoints",
       "success": true,
-      "details": "POST Status: 200, GET Status: 200, Count: 1 status checks",
-      "timestamp": "2026-04-14T09:49:00.670600"
+      "details": "POST Status: 200, GET Status: 200, Count: 5 status checks",
+      "timestamp": "2026-04-14T10:05:09.668738"
     }
   ]
 }

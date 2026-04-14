@@ -10,6 +10,8 @@ class MorganaAPITester:
         self.tests_run = 0
         self.tests_passed = 0
         self.test_results = []
+        self.admin_token = None
+        self.test_user_token = None
 
     def log_test(self, name, success, details=""):
         """Log test result"""
@@ -172,6 +174,190 @@ class MorganaAPITester:
             self.log_test("Status Endpoints", False, f"Error: {str(e)}")
             return False
 
+    def test_admin_login(self):
+        """Test admin login with correct credentials"""
+        try:
+            payload = {
+                "email": "admin@morgana.com",
+                "password": "Morgana2026!"
+            }
+            response = requests.post(f"{self.api_url}/auth/login", json=payload, timeout=10)
+            success = response.status_code == 200
+            details = f"Status: {response.status_code}"
+            
+            if success:
+                data = response.json()
+                self.admin_token = data.get('token')
+                user = data.get('user', {})
+                details += f", User: {user.get('email')}, Role: {user.get('role')}"
+                success = user.get('role') == 'admin' and self.admin_token is not None
+            
+            self.log_test("Admin Login", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Admin Login", False, f"Error: {str(e)}")
+            return False
+
+    def test_invalid_login(self):
+        """Test login with invalid credentials"""
+        try:
+            payload = {
+                "email": "admin@morgana.com",
+                "password": "wrongpassword"
+            }
+            response = requests.post(f"{self.api_url}/auth/login", json=payload, timeout=10)
+            success = response.status_code == 401
+            details = f"Status: {response.status_code} (Expected 401)"
+            
+            self.log_test("Invalid Login", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Invalid Login", False, f"Error: {str(e)}")
+            return False
+
+    def test_user_register(self):
+        """Test user registration"""
+        try:
+            # Use timestamp to create unique email
+            import time
+            unique_email = f"test{int(time.time())}@morgana.com"
+            
+            payload = {
+                "email": unique_email,
+                "password": "Test1234!",
+                "name": "Test User"
+            }
+            response = requests.post(f"{self.api_url}/auth/register", json=payload, timeout=10)
+            success = response.status_code == 200
+            details = f"Status: {response.status_code}"
+            
+            if success:
+                data = response.json()
+                self.test_user_token = data.get('token')
+                user = data.get('user', {})
+                details += f", User: {user.get('email')}, Name: {user.get('name')}"
+                success = user.get('role') == 'user' and self.test_user_token is not None
+            
+            self.log_test("User Registration", success, details)
+            return success
+        except Exception as e:
+            self.log_test("User Registration", False, f"Error: {str(e)}")
+            return False
+
+    def test_duplicate_register(self):
+        """Test registering with existing email"""
+        try:
+            payload = {
+                "email": "admin@morgana.com",  # Use admin email which definitely exists
+                "password": "Test1234!",
+                "name": "Test User 2"
+            }
+            response = requests.post(f"{self.api_url}/auth/register", json=payload, timeout=10)
+            success = response.status_code == 400
+            details = f"Status: {response.status_code} (Expected 400)"
+            
+            self.log_test("Duplicate Registration", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Duplicate Registration", False, f"Error: {str(e)}")
+            return False
+
+    def test_user_login(self):
+        """Test user login with registered credentials"""
+        try:
+            payload = {
+                "email": "test@morgana.com",
+                "password": "Test1234!"
+            }
+            response = requests.post(f"{self.api_url}/auth/login", json=payload, timeout=10)
+            success = response.status_code == 200
+            details = f"Status: {response.status_code}"
+            
+            if success:
+                data = response.json()
+                token = data.get('token')
+                user = data.get('user', {})
+                details += f", User: {user.get('email')}, Role: {user.get('role')}"
+                success = user.get('role') == 'user' and token is not None
+            
+            self.log_test("User Login", success, details)
+            return success
+        except Exception as e:
+            self.log_test("User Login", False, f"Error: {str(e)}")
+            return False
+
+    def test_auth_me_endpoint(self):
+        """Test /auth/me endpoint with valid token"""
+        if not self.admin_token:
+            self.log_test("Auth Me Endpoint", False, "No admin token available")
+            return False
+            
+        try:
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            response = requests.get(f"{self.api_url}/auth/me", headers=headers, timeout=10)
+            success = response.status_code == 200
+            details = f"Status: {response.status_code}"
+            
+            if success:
+                data = response.json()
+                details += f", User: {data.get('email')}, Role: {data.get('role')}"
+                success = data.get('role') == 'admin'
+            
+            self.log_test("Auth Me Endpoint", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Auth Me Endpoint", False, f"Error: {str(e)}")
+            return False
+
+    def test_auth_me_invalid_token(self):
+        """Test /auth/me endpoint with invalid token"""
+        try:
+            headers = {"Authorization": "Bearer invalid_token"}
+            response = requests.get(f"{self.api_url}/auth/me", headers=headers, timeout=10)
+            success = response.status_code == 401
+            details = f"Status: {response.status_code} (Expected 401)"
+            
+            self.log_test("Auth Me Invalid Token", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Auth Me Invalid Token", False, f"Error: {str(e)}")
+            return False
+
+    def test_authenticated_favorites(self):
+        """Test favorites with authentication"""
+        if not self.test_user_token:
+            self.log_test("Authenticated Favorites", False, "No test user token available")
+            return False
+            
+        try:
+            headers = {"Authorization": f"Bearer {self.test_user_token}"}
+            
+            # Create authenticated favorite
+            payload = {"caceria_id": "c3", "caceria_name": "Turnaround Stories"}
+            response = requests.post(f"{self.api_url}/favorites", json=payload, headers=headers, timeout=10)
+            success = response.status_code == 200
+            details = f"Create Status: {response.status_code}"
+            
+            if success:
+                # Get authenticated favorites
+                response2 = requests.get(f"{self.api_url}/favorites", headers=headers, timeout=10)
+                success = response2.status_code == 200
+                details += f", Get Status: {response2.status_code}"
+                
+                if success:
+                    data = response2.json()
+                    details += f", Count: {len(data)} favorites"
+                    # Should have the authenticated favorite
+                    has_c3 = any(f.get('caceria_id') == 'c3' for f in data)
+                    success = has_c3
+                    details += f", Has C3: {has_c3}"
+            
+            self.log_test("Authenticated Favorites", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Authenticated Favorites", False, f"Error: {str(e)}")
+            return False
+
     def run_all_tests(self):
         """Run comprehensive API test suite"""
         print("🚀 Starting MORGANA API Tests...")
@@ -182,6 +368,16 @@ class MorganaAPITester:
         if not self.test_api_root():
             print("❌ API is not accessible. Stopping tests.")
             return False
+
+        # Test authentication flow
+        print("\n🔐 Testing Authentication...")
+        self.test_admin_login()
+        self.test_invalid_login()
+        self.test_user_register()
+        self.test_duplicate_register()
+        self.test_user_login()
+        self.test_auth_me_endpoint()
+        self.test_auth_me_invalid_token()
 
         # Test favorites CRUD flow
         print("\n📋 Testing Favorites CRUD...")
@@ -198,14 +394,26 @@ class MorganaAPITester:
         # Test duplicate creation
         self.test_create_duplicate_favorite()
         
+        # Test authenticated favorites
+        self.test_authenticated_favorites()
+        
         # Delete the favorite
         self.test_delete_favorite("c1")
         
         # Test deleting nonexistent
         self.test_delete_nonexistent_favorite()
         
-        # Clean up c2 if it exists
-        self.test_delete_favorite("c2")
+        # Clean up c2 and c3 if they exist (ignore 404s)
+        try:
+            self.test_delete_favorite("c2")
+        except:
+            pass
+        try:
+            if self.test_user_token:
+                headers = {"Authorization": f"Bearer {self.test_user_token}"}
+                requests.delete(f"{self.api_url}/favorites/c3", headers=headers, timeout=10)
+        except:
+            pass
 
         # Test status endpoints
         print("\n📊 Testing Status Endpoints...")

@@ -1,0 +1,122 @@
+{
+  "theme": "dark",
+  "archetype": "Archetype 5 (Jewel & Luxury) mixed with Archetype 4 (Swiss & High-Contrast) - 'Old Money Tech' variant",
+  "typography": {
+    "fonts": {
+      "heading": "Playfair Display",
+      "body": "IBM Plex Sans",
+      "mono": "JetBrains Mono"
+    },
+    "scale": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-none font-semibold",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl tracking-tight leading-tight",
+      "h3": "text-xl sm:text-2xl tracking-tight",
+      "h4": "text-lg sm:text-xl",
+      "body": "text-base leading-relaxed",
+      "small": "text-sm",
+      "overline": "text-xs uppercase tracking-[0.2em] font-mono font-bold"
+    },
+    "anti_patterns": [
+      "Do not use Inter, Roboto, or Open Sans for headings.",
+      "Do not exceed text-6xl for the Hero heading.",
+      "Do not center paragraphs or dense text; left-align instead."
+    ]
+  },
+  "colors": {
+    "background": {
+      "base": "#050505",
+      "surface": "#0A0A0A",
+      "card": "#111111",
+      "glass": "rgba(10, 10, 10, 0.6)"
+    },
+    "text": {
+      "primary": "#FAFAFA",
+      "secondary": "#A3A3A3",
+      "muted": "#737373",
+      "inverse": "#050505"
+    },
+    "border": {
+      "default": "rgba(255, 255, 255, 0.08)",
+      "hover": "rgba(255, 255, 255, 0.2)"
+    },
+    "accent": {
+      "primary": "#C5A059",
+      "primary_hover": "#D4AF37",
+      "success": "#10B981",
+      "danger": "#EF4444"
+    },
+    "gradient": {
+      "hero_overlay": "bg-gradient-to-r from-black/80 via-black/50 to-transparent",
+      "gold_text": "bg-clip-text text-transparent bg-gradient-to-r from-[#C5A059] to-[#E6C98A]"
+    }
+  },
+  "layout_and_grids": {
+    "spacing_scale": "Use generous spacing. Use py-24 for main section padding.",
+    "strategies": {
+      "marketing_hero": "Asymmetrical layout. Large serif headline left-aligned, overlapping an abstract dark architectural image. Use max 80vh for mobile hero height.",
+      "cacerias_bento": "Control Room Grid Mode. grid-cols-1 md:grid-cols-2 lg:grid-cols-4. Strict 1px grid borders with tight gaps (gap-4 or gap-6). Cards should stretch to fill height.",
+      "pro_tips": "Tetris Grid Mode. Asymmetrical masonry or bento layout spanning multiple rows/cols to create visual tension.",
+      "comparative_table": "Full-width data table, left-aligned columns for text, right-aligned for numbers."
+    }
+  },
+  "surface_strategies": {
+    "header_nav": "Glassmorphism (Crystal Variant). backdrop-blur-xl bg-black/60. 1px bottom border-white/10.",
+    "cards_cacerias": "Grid Borders (Technical Look). Sharp edges (rounded-none or max rounded-sm). 1px solid border (border-white/10). Flat background, no shadow.",
+    "buttons": "Flat Solid. bg-[#C5A059] text-black hover:bg-[#D4AF37] hover:text-black transition-colors."
+  },
+  "components": {
+    "caceria_card": "Use pure div or highly customized Shadcn Card. Flat, sharp edges. Header includes the Cacería name in Serif, data/filters in Monospace. Must include a 'Copy URL' button.",
+    "navigation": "Sticky top or Left Sidebar for desktop, hamburger drawer for mobile. Navigation links must be clearly visible.",
+    "comparative_table": "Shadcn Table. Remove rounded corners. Add hover row highlights.",
+    "tradingview_chart": "Embed widget container. Must have a dark theme parameter in its embed configuration.",
+    "workflow_pipeline": "Visual step-by-step layout using connected nodes or an asymmetrical flex layout with arrows.",
+    "pro_tips_grid": "Cards of varying sizes (col-span-1 vs col-span-2) holding 20+ tips."
+  },
+  "icons_and_assets": {
+    "icon_library": "@phosphor-icons/react",
+    "icon_style": "Duotone or Regular weight. Ensure consistency.",
+    "image_urls": [
+      {
+        "category": "hero_background",
+        "url": "https://static.prod-images.emergentagent.com/jobs/12bdab86-0a95-4423-8e32-e6c714c3f096/images/9c5a14a71aee5cdf6d696d4f3d383c91ec404268739383eaae8b2e64333672c2.png",
+        "description": "Abstract dark financial data environment, Bloomberg terminal meets luxury"
+      },
+      {
+        "category": "section_texture",
+        "url": "https://static.prod-images.emergentagent.com/jobs/12bdab86-0a95-4423-8e32-e6c714c3f096/images/0a90d16e1bc3794a3df1d36f951cd812a2d652eb5356410e4a3c82715f46849a.png",
+        "description": "Abstract dark geometric pattern for background sections"
+      },
+      {
+        "category": "workflow_results_bg",
+        "url": "https://images.pexels.com/photos/10653885/pexels-photo-10653885.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Close-up of stock market data with fluctuating numbers"
+      },
+      {
+        "category": "setup_section_image",
+        "url": "https://images.unsplash.com/photo-1612461313099-0bc8da7dccb0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHwyfHxzdG9jayUyMG1hcmtldCUyMGFic3RyYWN0JTIwZGFya3xlbnwwfHx8fDE3NzYxNTg5Nzl8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Black flat screen computer monitor for the setup educational section"
+      }
+    ]
+  },
+  "animations": {
+    "hover_states": "Subtle translation (-translate-y-1) and border color shift on interactive cards.",
+    "buttons": "Smooth background color transition (duration-200 ease-in-out).",
+    "entrance": "Staggered fade-in-up for lists and grid items.",
+    "scroll": "Install and configure lenis for smooth momentum scrolling to enhance the premium feel."
+  },
+  "accessibility_and_testing": {
+    "testing_attributes": "All interactive and key informational elements MUST include a data-testid attribute in kebab-case (e.g., data-testid='copy-url-button').",
+    "contrast": "Text over backgrounds must meet APCA or WCAG AA standards. Use text shadows if placed over the hero image without the gradient overlay."
+  },
+  "instructions_to_main_agent": [
+    "Strictly adhere to the dark theme and 'Old Money Tech' archetype using the exact hex codes provided.",
+    "Use Playfair Display for headings and IBM Plex Sans for body text. Ensure JetBrains Mono is used for filter recipes and numeric data.",
+    "Install Google Fonts in the HTML or via standard CSS imports.",
+    "All interactive elements MUST have a data-testid attribute in kebab-case.",
+    "Do not use default Shadcn rounded cards. Override radii to be sharp (rounded-none or rounded-sm max) and use the 1px subtle borders to achieve the Grid Borders/Technical Look.",
+    "For the Hero section, overlay the hero_background image with the hero_overlay gradient to ensure text readability.",
+    "Use the provided image URLs. Do NOT use any placeholder services.",
+    "Implement the 8 Cacerias strategies using a bento/control-room grid. They are the core of the app.",
+    "Create a functional backend interaction (e.g., simple fastAPI + sqlite or localStorage mock if full backend isn't possible, but problem statement specifies fullstack for saving favorites, so build the backend endpoints for saving favorite cacerias)."
+  ]
+}

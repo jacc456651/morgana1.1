@@ -11,11 +11,14 @@ Thumbs.db
 
 # Dependencies
 node_modules/
+/node_modules
 vendor/
 venv/
+.venv/
 env/
 __pycache__/
 *.pyc
+*.pyo
 
 # Build outputs
 dist/
@@ -23,16 +26,26 @@ build/
 out/
 target/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
 # Environment and secrets
 .env
+.env.*
+*.env
 .env.local
-.env.*.local
+credentials.json
 *.key
 *.pem
+*.credentials
+*token.json*
+*credentials.json*
 
 # Testing
 coverage/
+/coverage
 .coverage
 *.cover
 .pytest_cache/
@@ -41,7 +54,49 @@ coverage/
 *.egg-info/
 .eggs/
 
+# Python
+*.pyc
+*.pyo
+
+# Next.js
+/.next/
+next-env.d.ts
+*.tsbuildinfo
+.yarn/install-state.gz
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+/.pnp
+.pnp.js
+
 # Personal files
 TASKS.md
-MEMORY.md
 .claude/worktrees/
+
+# Archive files
+**/*.zip
+**/*.tar.gz
+**/*.tar
+**/*.tgz
+*.pack
+*.deb
+*.dylib
+
+# Build caches
+.cache/
+
+# Development tools
+chainlit.md
+.chainlit
+.ipynb_checkpoints/
+
+# Deployment
+.vercel
+
+# Databases
+dump.rdb
+
+# Memory test files
+memory/test_credentials.md

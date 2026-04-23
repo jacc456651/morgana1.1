@@ -4,8 +4,13 @@ MORGANA — Sistema de Inversion Growth Institucional
 Uso: py morgana.py analiza TICKER
 """
 import sys
+import io
 import logging
 from pathlib import Path
+
+# Fix encoding en consola Windows (cp1252 no soporta todos los caracteres Unicode)
+if hasattr(sys.stdout, "buffer"):
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 ROOT = Path(__file__).parent
 if str(ROOT) not in sys.path:

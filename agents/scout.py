@@ -24,11 +24,17 @@ def _safe(fn, *args):
 
 
 def _df_to_dict(df_or_none):
-    """Convierte DataFrame de yfinance a dict serializable."""
+    """Convierte DataFrame de yfinance a dict serializable (keys a str)."""
     if df_or_none is None:
         return {}
     try:
-        return df_or_none.to_dict()
+        raw = df_or_none.to_dict()
+        # yfinance usa Timestamps como keys — convertir a str para json.dumps
+        return {
+            str(col): {str(idx): val for idx, val in rows.items()}
+            if isinstance(rows, dict) else rows
+            for col, rows in raw.items()
+        }
     except Exception:
         return {}
 

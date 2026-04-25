@@ -8,6 +8,8 @@ class MorganaState(TypedDict):
     reporte: Optional[str]
     decision: Optional[str]
     errors: list
+    analysis_id: Optional[str]
+    report_path: Optional[str]
 
 
 def initial_state(ticker: str, command: str) -> MorganaState:
@@ -18,4 +20,6 @@ def initial_state(ticker: str, command: str) -> MorganaState:
         "reporte": None,
         "decision": None,
         "errors": [],
+        "analysis_id": None,
+        "report_path": None,
     }

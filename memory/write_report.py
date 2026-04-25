@@ -2,6 +2,8 @@ import logging
 from datetime import datetime
 from pathlib import Path
 
+from memory.save_analysis import extract_classification, extract_stage, extract_pillars
+
 logger = logging.getLogger("morgana.memory")
 
 DEFAULT_OUTPUT_DIR = "output/reportes"
@@ -15,9 +17,8 @@ def write_report_md(
     output_dir: str = DEFAULT_OUTPUT_DIR,
 ) -> str:
     """
-    Escribe el reporte de análisis como .md en output/reportes/[TICKER]/.
-    Retorna la ruta del archivo creado.
-    Compatible con Obsidian vault apuntando a output/.
+    Escribe el reporte como .md en output/reportes/[TICKER]/ con frontmatter
+    rico compatible con Obsidian vault (Dataview queries sobre pilares, etapa, etc.)
     """
     date_str = datetime.now().strftime("%Y-%m-%d")
     ticker_dir = Path(output_dir) / ticker
@@ -27,11 +28,23 @@ def write_report_md(
     filepath = ticker_dir / filename
 
     score_str = f"{score:.0f}" if score is not None else "N/A"
+    clasificacion = extract_classification(reporte) or "N/A"
+    etapa = extract_stage(reporte) or "N/A"
+    pillars = extract_pillars(reporte)
+    pillars_yaml = "\n".join(
+        f"  P{i}: {pillars.get(f'P{i}', 'N/A')}" for i in range(1, 6)
+    )
+
     frontmatter = f"""---
 ticker: {ticker}
 fecha: {date_str}
 score: {score_str}
+clasificacion: {clasificacion}
+etapa: {etapa}
 decision: {decision}
+pilares:
+{pillars_yaml}
+tags: []
 ---
 
 """

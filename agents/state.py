@@ -6,6 +6,7 @@ class MorganaState(TypedDict):
     command: str
     datos_financieros: Optional[dict]
     contexto_web: Optional[dict]
+    vault_context: Optional[dict]
     reporte: Optional[str]
     decision: Optional[str]
     errors: list
@@ -19,6 +20,7 @@ def initial_state(ticker: str, command: str) -> MorganaState:
         "command": command,
         "datos_financieros": None,
         "contexto_web": None,
+        "vault_context": None,
         "reporte": None,
         "decision": None,
         "errors": [],

@@ -9,6 +9,7 @@ if str(ROOT) not in sys.path:
 
 from connectors import edgar, yahoo, finviz, stockanalysis_client, fred, sec_insider, short_interest
 from agents.state import MorganaState
+from memory.vault_reader import get_vault_context
 
 logger = logging.getLogger("morgana.scout")
 
@@ -96,5 +97,9 @@ def scout_node(state: MorganaState) -> dict:
         "short_interest": short_interest.extract_short_interest(yahoo_info),
     }
 
+    vault = get_vault_context(ticker)
+    if vault["count"] > 0:
+        logger.info("[Scout] Vault: %d análisis previos para %s", vault["count"], ticker)
+
     logger.info("[Scout] Recolección completa para %s. Errores: %d", ticker, len(errors))
-    return {"datos_financieros": datos, "errors": errors}
+    return {"datos_financieros": datos, "vault_context": vault, "errors": errors}

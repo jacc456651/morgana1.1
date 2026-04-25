@@ -36,10 +36,20 @@ TESIS + ANTITESIS: Ambos lados obligatorio. Sin sesgo confirmatorio.
 Nunca inventes datos. Si un dato no esta disponible, declaralo explicitamente.
 """
 
-ANALYSIS_TEMPLATE = """Analiza {ticker} usando los siguientes datos recolectados:
+ANALYSIS_TEMPLATE = """Analiza {ticker} usando los siguientes datos:
 
-=== DATOS FINANCIEROS ===
+=== DATOS FINANCIEROS (EDGAR/Yahoo/Finviz) ===
 {datos_json}
+
+=== CONTEXTO WEB RECIENTE (Perplexity, últimos 30 días) ===
+NOTICIAS:
+{noticias}
+
+COMPETIDORES:
+{competidores}
+
+MANAGEMENT:
+{management}
 
 === INSTRUCCION ===
 Genera un reporte completo con esta estructura EXACTA:
@@ -97,6 +107,7 @@ def boss_node(state: MorganaState) -> dict:
     """
     ticker = state["ticker"]
     datos = state.get("datos_financieros") or {}
+    contexto_web = state.get("contexto_web") or {}
     errors = list(state.get("errors", []))
 
     try:
@@ -107,7 +118,13 @@ def boss_node(state: MorganaState) -> dict:
         datos_str = str(datos)[:20_000]
         logger.warning("Error serializando datos: %s", exc)
 
-    prompt = ANALYSIS_TEMPLATE.format(ticker=ticker, datos_json=datos_str)
+    prompt = ANALYSIS_TEMPLATE.format(
+        ticker=ticker,
+        datos_json=datos_str,
+        noticias=contexto_web.get("noticias", "No disponible"),
+        competidores=contexto_web.get("competidores", "No disponible"),
+        management=contexto_web.get("management", "No disponible"),
+    )
 
     try:
         client = get_claude_client()

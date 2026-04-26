@@ -1,6 +1,9 @@
 import sys
 import json
 import logging
+import asyncio
+import threading
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
@@ -9,17 +12,29 @@ sys.path.insert(0, str(ROOT))
 from dotenv import load_dotenv
 load_dotenv(ROOT / ".env")
 
-from fastapi import FastAPI, Path as FPath
+from fastapi import FastAPI, Path as FPath, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from sse_starlette.sse import EventSourceResponse
 
 from memory.supabase_client import get_supabase
+from graph.morgana import build_graph
+from agents.state import initial_state
+from memory.save_analysis import extract_score
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("morgana.ui")
 
 app = FastAPI(title="Morgana UI")
+
+_GRAPH = None
+
+def _get_graph():
+    global _GRAPH
+    if _GRAPH is None:
+        _GRAPH = build_graph()
+    return _GRAPH
 
 app.add_middleware(
     CORSMiddleware,
@@ -64,6 +79,79 @@ async def get_ticker_history(
     except Exception as exc:
         logger.error("Error fetching ticker %s: %s", ticker, exc)
         return {"data": [], "error": str(exc)}
+
+
+@app.get("/api/analyze")
+async def analyze_sse(
+    ticker: str = Query(..., pattern=r"^[A-Z]{1,5}(-[A-Z])?$"),
+    command: str = Query(default="analiza"),
+):
+    """SSE stream: runs LangGraph graph and emits step/log/done/error events."""
+
+    async def event_generator():
+        q: asyncio.Queue = asyncio.Queue()
+        loop = asyncio.get_event_loop()
+        t0 = time.time()
+
+        def _run():
+            try:
+                graph = _get_graph()
+                state = initial_state(ticker.upper(), command)
+                step_start = {}
+                result_data = {"score": None, "decision": None, "analysis_id": None}
+
+                for update in graph.stream(state, stream_mode="updates"):
+                    node = list(update.keys())[0]
+                    output = update[node]
+
+                    if node not in step_start:
+                        step_start[node] = time.time()
+                        asyncio.run_coroutine_threadsafe(
+                            q.put({"type": "step", "agent": node, "status": "running"}),
+                            loop,
+                        )
+
+                    node_elapsed = round(time.time() - step_start[node], 1)
+                    asyncio.run_coroutine_threadsafe(
+                        q.put({
+                            "type": "step",
+                            "agent": node,
+                            "status": "done",
+                            "elapsed": node_elapsed,
+                        }),
+                        loop,
+                    )
+
+                    if node == "boss":
+                        reporte = output.get("reporte", "")
+                        result_data["score"] = extract_score(reporte)
+                        result_data["decision"] = output.get("decision")
+
+                    if node == "save":
+                        result_data["analysis_id"] = output.get("analysis_id")
+
+                asyncio.run_coroutine_threadsafe(
+                    q.put({"type": "done", **result_data, "elapsed": round(time.time() - t0, 1)}),
+                    loop,
+                )
+            except Exception as exc:
+                asyncio.run_coroutine_threadsafe(
+                    q.put({"type": "error", "message": str(exc)}),
+                    loop,
+                )
+            finally:
+                asyncio.run_coroutine_threadsafe(q.put(None), loop)
+
+        thread = threading.Thread(target=_run, daemon=True)
+        thread.start()
+
+        while True:
+            item = await q.get()
+            if item is None:
+                break
+            yield {"data": json.dumps(item, ensure_ascii=False)}
+
+    return EventSourceResponse(event_generator())
 
 
 DIST_DIR = Path(__file__).parent / "app" / "dist"

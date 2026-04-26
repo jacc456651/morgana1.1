@@ -23,6 +23,14 @@ def extract_stage(reporte: str) -> str | None:
     return match.group(1) if match else None
 
 
+def extract_pillars(reporte: str) -> dict:
+    """Extrae scores P1-P5 del reporte. Devuelve dict {P1: 8.0, P2: 7.0, ...}"""
+    pillars = {}
+    for match in re.finditer(r"###\s+P(\d)[^|]+\|\s*Score:\s*(\d+(?:\.\d+)?)/10", reporte):
+        pillars[f"P{match.group(1)}"] = float(match.group(2))
+    return pillars
+
+
 def save_analysis(
     ticker: str, command: str, reporte: str, decision: str, errors: list
 ) -> str | None:
@@ -44,6 +52,12 @@ def save_analysis(
             analysis_id = result.data[0]["id"]
             logger.info("[Supabase] Análisis guardado: %s → %s", ticker, analysis_id)
             return analysis_id
+        else:
+            logger.warning(
+                "[Supabase] Insert no retornó datos para %s — "
+                "verifica que la tabla 'analyses' exista y que SERVICE_KEY esté configurada",
+                ticker,
+            )
 
     except Exception as exc:
         logger.warning("[Supabase] Error guardando análisis: %s", exc)

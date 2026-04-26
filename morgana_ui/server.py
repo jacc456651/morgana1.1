@@ -243,7 +243,6 @@ async def actor_sse(
     async def event_generator():
         q: asyncio.Queue = asyncio.Queue()
         loop = asyncio.get_running_loop()
-        cancel_event = threading.Event()
 
         def _run():
             try:
@@ -319,7 +318,8 @@ async def actor_sse(
                     break
                 yield {"data": json.dumps(item, ensure_ascii=False)}
         except (asyncio.CancelledError, GeneratorExit):
-            cancel_event.set()
+            # Claude API call in _run thread is blocking and non-interruptible;
+            # thread runs to completion even on disconnect (daemon=True handles cleanup).
             raise
 
     return EventSourceResponse(event_generator())
@@ -377,11 +377,15 @@ async def sabueso_sse(
 
         threading.Thread(target=_run, daemon=True).start()
 
-        while True:
-            item = await q.get()
-            if item is None:
-                break
-            yield {"data": json.dumps(item, ensure_ascii=False)}
+        try:
+            while True:
+                item = await q.get()
+                if item is None:
+                    break
+                yield {"data": json.dumps(item, ensure_ascii=False)}
+        except (asyncio.CancelledError, GeneratorExit):
+            # Screener thread runs to completion even on disconnect (daemon=True handles cleanup).
+            raise
 
     return EventSourceResponse(event_generator())
 

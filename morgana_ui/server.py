@@ -26,15 +26,20 @@ from memory.save_analysis import extract_score
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("morgana.ui")
 
-app = FastAPI(title="Morgana UI")
-
 _GRAPH = None
+_GRAPH_LOCK = threading.Lock()
+
 
 def _get_graph():
     global _GRAPH
     if _GRAPH is None:
-        _GRAPH = build_graph()
+        with _GRAPH_LOCK:
+            if _GRAPH is None:
+                _GRAPH = build_graph()
     return _GRAPH
+
+
+app = FastAPI(title="Morgana UI")
 
 app.add_middleware(
     CORSMiddleware,
@@ -88,19 +93,27 @@ async def analyze_sse(
 ):
     """SSE stream: runs LangGraph graph and emits step/log/done/error events."""
 
+    ALLOWED_COMMANDS = {"analiza", "compounder", "consejo", "chequea", "modelo"}
+    if command not in ALLOWED_COMMANDS:
+        command = "analiza"
+
     async def event_generator():
         q: asyncio.Queue = asyncio.Queue()
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
+        cancel_event = threading.Event()
         t0 = time.time()
 
         def _run():
             try:
+                logger.info("[analyze] Starting: ticker=%s command=%s", ticker, command)
                 graph = _get_graph()
                 state = initial_state(ticker.upper(), command)
                 step_start = {}
                 result_data = {"score": None, "decision": None, "analysis_id": None}
 
                 for update in graph.stream(state, stream_mode="updates"):
+                    if cancel_event.is_set():
+                        break
                     node = list(update.keys())[0]
                     output = update[node]
 
@@ -135,6 +148,7 @@ async def analyze_sse(
                     loop,
                 )
             except Exception as exc:
+                logger.error("[analyze] Error: ticker=%s error=%s", ticker, exc)
                 asyncio.run_coroutine_threadsafe(
                     q.put({"type": "error", "message": str(exc)}),
                     loop,
@@ -145,11 +159,15 @@ async def analyze_sse(
         thread = threading.Thread(target=_run, daemon=True)
         thread.start()
 
-        while True:
-            item = await q.get()
-            if item is None:
-                break
-            yield {"data": json.dumps(item, ensure_ascii=False)}
+        try:
+            while True:
+                item = await q.get()
+                if item is None:
+                    break
+                yield {"data": json.dumps(item, ensure_ascii=False)}
+        except (asyncio.CancelledError, GeneratorExit):
+            cancel_event.set()
+            raise
 
     return EventSourceResponse(event_generator())
 

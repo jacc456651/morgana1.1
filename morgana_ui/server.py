@@ -6,7 +6,10 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from fastapi import FastAPI
+from dotenv import load_dotenv
+load_dotenv(ROOT / ".env")
+
+from fastapi import FastAPI, Path as FPath
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -44,7 +47,9 @@ async def list_analyses():
 
 
 @app.get("/api/analyses/{ticker}")
-async def get_ticker_history(ticker: str):
+async def get_ticker_history(
+    ticker: str = FPath(..., pattern=r"^[A-Z]{1,5}(-[A-Z])?$")
+):
     try:
         sb = get_supabase()
         result = (
@@ -63,7 +68,7 @@ async def get_ticker_history(ticker: str):
 
 DIST_DIR = Path(__file__).parent / "app" / "dist"
 
-if DIST_DIR.exists():
+if DIST_DIR.exists() and (DIST_DIR / "assets").exists():
     app.mount("/assets", StaticFiles(directory=DIST_DIR / "assets"), name="assets")
 
     @app.get("/{full_path:path}")
@@ -77,4 +82,4 @@ else:
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("server:app", host="0.0.0.0", port=8080, reload=False)
+    uvicorn.run(app, host="0.0.0.0", port=8080, reload=False)
